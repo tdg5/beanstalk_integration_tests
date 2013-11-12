@@ -22,6 +22,18 @@ class PauseTubeTest < BeanstalkIntegrationTest
     end
 
 
+    should 'should reduce large delays to mod 2**32' do
+      pause_overflow = 10
+      pause = 2**32 + pause_overflow
+      initial_tube_cmd_pause = client.transmit("stats-tube #{tube_name}")[:body]['cmd-pause-tube']
+      response = client.transmit("pause-tube #{tube_name} #{pause}")
+      assert_equal 'PAUSED', response[:status]
+      tube_stats = client.transmit("stats-tube #{tube_name}")[:body]
+      assert_equal pause_overflow, tube_stats['pause']
+      assert_equal(initial_tube_cmd_pause + 1, tube_stats['cmd-pause-tube'], 'Expected tube cmd-pause-tube to be incremented')
+    end
+
+
     should 'activate a tube after the timeout has expired' do
       pause = 1
       initial_tube_cmd_pause = client.transmit("stats-tube #{tube_name}")[:body]['cmd-pause-tube']
@@ -134,6 +146,19 @@ class PauseTubeTest < BeanstalkIntegrationTest
           client.transmit("pause-tube name_with_#{bad_char}_in_it 10")
         end
       end
+    end
+
+
+    should 'should be able to handle tube name of max length with delay of max length' do
+      pause = 2**32 - 1
+      name = 'c' * 200
+      initial_tube_cmd_pause = client.transmit("stats-tube #{tube_name}")[:body]['cmd-pause-tube']
+      client.transmit("watch #{name}")
+      response = client.transmit("pause-tube #{name} #{pause}")
+      assert_equal 'PAUSED', response[:status]
+      tube_stats = client.transmit("stats-tube #{name}")[:body]
+      assert_equal pause, tube_stats['pause']
+      assert_equal(initial_tube_cmd_pause + 1, tube_stats['cmd-pause-tube'], 'Expected tube cmd-pause-tube to be incremented')
     end
 
   end
