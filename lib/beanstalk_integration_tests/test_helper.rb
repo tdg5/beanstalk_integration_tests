@@ -1,5 +1,3 @@
-ENV['TEST'] ||= 'true'
-
 require 'test/unit'
 require 'mocha/setup'
 require 'minitest/autorun'

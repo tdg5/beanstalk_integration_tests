@@ -1,4 +1,4 @@
-require 'test_helper'
+require 'beanstalk_integration_tests/test_helper'
 
 class StatsJobTest < BeanstalkIntegrationTest
 
