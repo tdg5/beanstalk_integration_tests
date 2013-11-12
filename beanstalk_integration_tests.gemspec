@@ -18,9 +18,9 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^lib/beanstalk_integration_tests/test/})
   spec.require_paths = ['lib']
 
-  spec.add_development_dependency 'bundler', '~> 1.3'
-  spec.add_development_dependency 'rake'
-  spec.add_development_dependency 'beaneater'
-  spec.add_development_dependency 'minitest_should'
-  spec.add_development_dependency 'mocha'
+  spec.add_dependency 'bundler', '~> 1.3'
+  spec.add_dependency 'rake'
+  spec.add_dependency 'beaneater'
+  spec.add_dependency 'minitest_should'
+  spec.add_dependency 'mocha'
 end
