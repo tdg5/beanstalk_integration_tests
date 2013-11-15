@@ -4,6 +4,7 @@ require 'minitest/autorun'
 require 'minitest/should'
 
 require 'securerandom'
+require 'timeout'
 
 require 'beaneater'
 
