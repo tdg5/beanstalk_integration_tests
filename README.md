@@ -1,4 +1,5 @@
 # BeanstalkIntegrationTests
+[![Gem Version](https://badge.fury.io/rb/beanstalk_integration_tests.png)](http://badge.fury.io/rb/beanstalk_integration_tests)
 
 A suite of integration tests to test adherence to the Beanstalkd protocol (https://github.com/kr/beanstalkd/blob/master/doc/protocol.md).
 
