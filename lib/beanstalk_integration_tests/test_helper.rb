@@ -9,7 +9,28 @@ require 'timeout'
 require 'beaneater'
 
 
+if RUBY_PLATFORM == 'java'
+  module Timeout
+    def timeout(sec, klass=nil)
+      return yield(sec) if sec == nil or sec.zero?
+      thread = Thread.new { yield(sec) }
+
+      if thread.join(sec).nil?
+        java_thread = JRuby.reference(thread)
+        thread.kill
+        java_thread.native_thread.interrupt
+        thread.join(0.15)
+        raise (klass || Error), 'execution expired'
+      else
+        thread.value
+      end
+    end
+  end
+end
+
+
 class BeanstalkIntegrationTest < MiniTest::Should::TestCase
+  include Timeout
 
   class << self
 
@@ -26,7 +47,11 @@ class BeanstalkIntegrationTest < MiniTest::Should::TestCase
   teardown do
     cleanup_tubes
     @clients.each do |client|
-      client.close unless client.connection.nil?
+      begin
+        client.close unless client.connection.nil?
+      rescue Errno::EBADF
+        # Timeouts in JRuby trash the client connection
+      end
     end
   end
 

@@ -1,5 +1,4 @@
 require 'beanstalk_integration_tests/test_helper'
-require 'timeout'
 
 class ReserveTest < BeanstalkIntegrationTest
 
