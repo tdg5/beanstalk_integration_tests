@@ -58,10 +58,12 @@ class UseTest < BeanstalkIntegrationTest
     end
 
 
-    should 'return BAD_FORMAT if line has a trailing space' do
+    should 'return BAD_FORMAT if line has a trailing space or extraneous args' do
       initital_cmd_use = client.transmit('stats')[:body]['cmd-use']
-      assert_raises Beaneater::BadFormatError do
-        client.transmit("use #{tube_name} ")
+      [' ', ' foo'].each do |trailer|
+        assert_raises Beaneater::BadFormatError do
+          client.transmit("use #{tube_name}#{trailer}")
+        end
       end
       assert_equal(initital_cmd_use, client.transmit('stats')[:body]['cmd-use'], 'Expected cmd-use to be unchanged')
     end

@@ -49,10 +49,12 @@ class WatchTest < BeanstalkIntegrationTest
     end
 
 
-    should 'return BAD_FORMAT if line has a trailing space' do
+    should 'return BAD_FORMAT if line has a trailing space or extraneous arguments' do
       initital_cmd_use = client.transmit('stats')[:body]['cmd-watch']
-      assert_raises Beaneater::BadFormatError do
-        client.transmit("watch #{tube_name} ")
+      [' ', ' foo'].each do |trailer|
+        assert_raises Beaneater::BadFormatError do
+          client.transmit("watch #{tube_name}#{trailer}")
+        end
       end
       assert_equal(initital_cmd_use, client.transmit('stats')[:body]['cmd-watch'], 'Expected cmd-watch to be unchanged')
     end
