@@ -92,16 +92,6 @@ class StatsTest < BeanstalkIntegrationTest
     end
 
 
-    should 'return correct pid' do
-      %x[which pgrep]
-      skip('pgrep is required to determine possible pids') unless $CHILD_STATUS.success?
-      pids = %x[pgrep -f beanstalk].split
-
-      stats = client.transmit('stats')[:body]
-      assert(pids.include?(stats['pid'].to_s), 'Expected pids for processes with beanstalk in title to include beanstalk pid')
-    end
-
-
     should 'return correct count of current-connections and total-connections' do
       stats = client.transmit('stats')[:body]
       initial_current_connections = stats['current-connections']
