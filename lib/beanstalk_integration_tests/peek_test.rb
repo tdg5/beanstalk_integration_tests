@@ -25,8 +25,6 @@ class PeekTest < BeanstalkIntegrationTest
         initial_cmd_peek = client.transmit('stats')[:body]['cmd-peek']
         assert_raises(Beaneater::NotFoundError, 'Expected peeking non-existent job to return NOT_FOUND') do
           response = client.transmit("peek #{job_id}")
-          debugger
-          puts "#{job_id}: #{response.inspect}"
         end
         assert_equal(initial_cmd_peek + 1, client.transmit('stats')[:body]['cmd-peek'], 'Expected cmd-peek to be incremented')
       end
