@@ -259,7 +259,7 @@ class PutTest < BeanstalkIntegrationTest
       connection.write("put 0 0 120 #{@message.bytesize}\r\n")
       connection.write("#{@message}\r\n")
       response = connection.gets
-      assert_match(response, /INSERTED \d+\r\n/)
+      assert_match(/INSERTED \d+\r\n/, response)
       job_id = response.scan(/\d+/).first.to_i
       job_tube = client.transmit("stats-job #{job_id}")[:body]['tube']
       stats = client.transmit('stats')[:body]
