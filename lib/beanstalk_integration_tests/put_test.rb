@@ -250,6 +250,24 @@ class PutTest < BeanstalkIntegrationTest
       assert_equal initial_cmd_put + 1, build_client.transmit('stats')[:body]['cmd-put']
     end
 
+
+    should 'accept body as separate transmission' do
+      stats = client.transmit('stats')[:body]
+      initial_current_producers = stats['current-producers']
+      initial_cmd_put = stats['cmd-put']
+      connection = client.connection
+      connection.write("put 0 0 120 #{@message.bytesize}\r\n")
+      connection.write("#{@message}\r\n")
+      response = connection.gets
+      assert_match(response, /INSERTED \d+\r\n/)
+      job_id = response.scan(/\d+/).first.to_i
+      job_tube = client.transmit("stats-job #{job_id}")[:body]['tube']
+      stats = client.transmit('stats')[:body]
+      assert_equal initial_cmd_put + 1, stats['cmd-put']
+      assert_equal initial_current_producers + 1, stats['current-producers']
+      assert_equal tube_name, job_tube
+    end
+
   end
 
 end
