@@ -9,6 +9,9 @@ require 'timeout'
 require 'beaneater'
 
 
+# Open TCP connection with beanstalkd server prevents
+# JRuby timeout from killing thread. Has some weird
+# side effects, but allows Timeout#timeout to work
 if RUBY_PLATFORM == 'java'
   module Timeout
     def timeout(sec, klass=nil)
